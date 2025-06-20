@@ -1,23 +1,32 @@
 {
     "name": "zaiblab/mysql-backup",
-    "description": "A PHP library for backing up and restoring MySQL databases",
+    "description": "A maintained fork of ramazancetinkaya/mysql-backup — A PHP library for backing up and restoring MySQL databases.",
     "type": "library",
-    "keywords": ["php", "pdo", "mysql", "database", "backup", "restore"],
+    "keywords": ["php", "pdo", "mysql", "database", "backup", "restore", "maintained fork"],
     "license": "MIT",
     "authors": [
         {
             "name": "Ramazan Çetinkaya",
             "email": "ramazancetinkayadev@hotmail.com",
             "homepage": "https://github.com/ramazancetinkaya"
+        },
+        {
+            "name": "Shahzaib Sarwar",
+            "email": "your-email@example.com",
+            "homepage": "https://github.com/zaiblab",
+            "role": "Maintainer"
         }
     ],
     "require": {
-        "php": "^8.0",
-        "phpmailer/phpmailer": "*"
+        "php": "^8.0"
     },
     "autoload": {
         "psr-4": {
             "DatabaseBackupManager\\": "src/"
         }
+    },
+    "support": {
+        "issues": "https://github.com/zaiblab/mysql-backup/issues",
+        "source": "https://github.com/zaiblab/mysql-backup"
     }
 }
