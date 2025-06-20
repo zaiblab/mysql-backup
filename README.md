@@ -1,12 +1,7 @@
-<h1 align="center">MySQL Backup & Restore Library</h1>
-
-<br>
-
 ## Table of Contents
 
 * [Introduction](#introduction)
 * [About the Project](#about-the-project)
-* [Screenshot](#screenshot)
 * [Features](#features)
 * [Requirements](#requirements)
 * [Installation](#installation)
@@ -24,10 +19,6 @@ This library is meticulously crafted to cater to a wide spectrum of users, rangi
 ## About the Project
 
 The MySQL Backup & Restore Library furnishes comprehensive functionalities tailored for the seamless backup and restoration of MySQL databases through PHP. Leveraging this library, developers can effectively safeguard vital data housed within MySQL databases, ensuring robust data integrity and facilitating swift recovery in the event of data loss or system failures.
-
-### Screenshot
-
-![Screenshot](mysql-backup.png)
 
 ## Features
 
