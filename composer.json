@@ -1,11 +1,19 @@
 {
     "name": "zaiblab/mysql-backup",
-    "description": "A powerful and modern PHP library for backing up and restoring MySQL databases using PDO.",
+    "description": "A PHP library for backing up and restoring MySQL databases",
     "type": "library",
     "keywords": ["php", "pdo", "mysql", "database", "backup", "restore"],
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Ramazan Çetinkaya",
+            "email": "ramazancetinkayadev@hotmail.com",
+            "homepage": "https://github.com/ramazancetinkaya"
+        }
+    ],
     "require": {
-        "php": "^8.0"
+        "php": "^8.0",
+        "phpmailer/phpmailer": "*"
     },
     "autoload": {
         "psr-4": {
