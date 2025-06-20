@@ -16,8 +16,6 @@ namespace DatabaseBackupManager;
 
 use PDO;
 use ZipArchive;
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 
 class MySQLBackup
 {
@@ -90,11 +88,10 @@ class MySQLBackup
      * @param array|string|null $tables Names of the tables to backup. If null, all tables will be backed up.
      * @param bool $includeData Whether to include table data in the backup.
      * @param bool $archive Whether to archive the backup file.
-     * @param string|null $emailRecipient Email address to send the backup file.
      * @return string Path to the generated backup file.
      * @throws Exception If backup process fails.
      */
-    public function backup($tables = null, $includeData = true, $archive = false, $emailRecipient = null) 
+    public function backup($tables = null, $includeData = true, $archive = false) 
     {
         try {
             // Disable foreign key checks during backup
@@ -115,6 +112,9 @@ class MySQLBackup
             // Write header information to the backup file
             $this->writeBackupHeader($backupFile);
 
+            // Write SET FOREIGN_KEY_CHECKS=0 to backup file
+            fwrite($backupFile, "SET foreign_key_checks=0;\n\n");
+
             // Backup tables
             if ($tables) {
                 $this->backupTables($tables, $includeData, $backupFile);
@@ -132,12 +132,6 @@ class MySQLBackup
             if ($archive) 
             {
                 $backupFileName = $this->archiveBackupFile($backupFileName);
-            }
-
-            // If email recipient is provided, send the backup file
-            if ($emailRecipient) 
-            {
-                $this->sendBackupByEmail($backupFileName, $emailRecipient);
             }
 
             // Commit transaction
@@ -320,7 +314,7 @@ class MySQLBackup
         foreach ($tableData as $row) {
             fwrite($backupFile, "(");
             $values = array_map(function($value) {
-                return "'" . addslashes($value) . "'";
+                return "'" . addslashes((string) $value) . "'";
             }, array_values($row));
             fwrite($backupFile, implode(", ", $values));
             fwrite($backupFile, "),\n");
@@ -348,52 +342,6 @@ class MySQLBackup
             return $zipFileName;
         } else {
             throw new Exception('Failed to create zip archive.');
-        }
-    }
-
-    /**
-     * Send backup file by email.
-     * 
-     * @param string $backupFileName Path to the backup file.
-     * @param string $recipient Email address of the recipient.
-     * @throws Exception If sending email fails.
-     */
-    private function sendBackupByEmail($backupFileName, $recipient) 
-    {
-        $mail = new PHPMailer(true);
-
-        try {
-            // Server settings
-            $mail->isSMTP();
-            $mail->Host       = 'smtp.example.com'; // Gmail SMTP: smtp.gmail.com
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'your-email@example.com';
-            $mail->Password   = 'your-email-password';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = 587;
-
-            // Recipients
-            $mail->setFrom('from@example.com', 'Database Backup Manager');
-            $mail->addAddress($recipient);
-
-            // Attach backup file
-            $mail->addAttachment($backupFileName);
-
-            // Content
-            $mail->isHTML(true);
-            $mail->Subject = 'Database Backup';
-            $mail->Body    = '
-                <html>
-                <body>
-                    <p>Hello,</p>
-                    <p>Please find attached the database backup file you requested.</p>
-                    <p>This backup was created automatically by the <a href="https://github.com/ramazancetinkaya/mysql-backup/">Database Backup Manager</a>.</p>
-                </body>
-                </html>
-            ';
-            $mail->send();
-        } catch (Exception $e) {
-            throw new Exception('Backup email could not be sent. Mailer Error: ' . $mail->ErrorInfo);
         }
     }
 }
