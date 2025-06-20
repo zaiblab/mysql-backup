@@ -1,46 +1,6 @@
 <h1 align="center">MySQL Backup & Restore Library</h1>
 
-[![License](https://img.shields.io/github/license/ramazancetinkaya/mysql-backup)](https://github.com/ramazancetinkaya/mysql-backup/blob/master/LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues/ramazancetinkaya/mysql-backup)](https://github.com/ramazancetinkaya/mysql-backup/issues)
-[![GitHub stars](https://img.shields.io/github/stars/ramazancetinkaya/mysql-backup)](https://github.com/ramazancetinkaya/mysql-backup/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/ramazancetinkaya/mysql-backup)](https://github.com/ramazancetinkaya/mysql-backup/network)
-
-<p align="center">An update with the necessary configuration settings for sending emails via PHPMailer is coming soon. Stay tuned.</p>
-
-<p align="center">
-  <a href="https://github.com/ramazancetinkaya/mysql-backup">
-    <img src="https://www.mysql.com/common/logos/logo-mysql-170x115.png" alt="Logo">
-  </a>
-
-  <h3 align="center">MySQL Backup & Restore Library</h3>
-
-  <p align="center">
-    A powerful and modern PHP library for backing up and restoring MySQL databases using PDO.
-    <br>
-    <a href="https://github.com/ramazancetinkaya/mysql-backup/blob/main/README.md"><strong>Explore the docs »</strong></a>
-    <br>
-    <br>
-    <a href="https://github.com/ramazancetinkaya/mysql-backup/issues">Report a Bug</a>
-    ·
-    <a href="https://github.com/ramazancetinkaya/mysql-backup/pulls">New Pull Request</a>
-  </p>
-</p>
-
 <br>
-
-## 🌟 Star this Repository!
-
-If you find the MySQL Backup & Restore library helpful or interesting, consider giving it a star! ⭐️
-
-Your star helps us grow and motivates us to continue improving the library. It also makes it easier for others to discover and benefit from this project.
-
-### How to Star?
-
-1. **Login to Your GitHub Account:** You need to have a GitHub account.
-2. **Visit the Repository:** Go to the [MySQL Backup & Restore Repository](https://github.com/ramazancetinkaya/mysql-backup).
-3. **Click the Star Button:** On the top-right corner of the page, you'll find a "Star" button. Click on it!
-
-That's it! Thank you for your support! 🚀
 
 ## Table of Contents
 
@@ -76,7 +36,6 @@ The MySQL Backup & Restore Library furnishes comprehensive functionalities tailo
 * Generate SQL dumps in a structured format.
 * Automatic generation of backup filenames with date and time.
 * Archive backups in ZIP format.
-* Send backups via email.
 * Easy to integrate into existing PHP projects.
 
 ## Requirements
@@ -84,7 +43,6 @@ The MySQL Backup & Restore Library furnishes comprehensive functionalities tailo
 - PHP version 8.0 or **higher**
 - PDO extension **enabled**
 - ZipArchive extension **enabled**
-- PHPMailer
 - MySQL database
 - Composer (for installation)
 
@@ -101,7 +59,7 @@ If you don't have Composer installed, you can download and install it by followi
 Once Composer is installed, you can install the `mysql-backup` library by running the following command in your project's root directory:
 
 ```bash
-composer require ramazancetinkaya/mysql-backup
+composer require zaiblab/mysql-backup
 ```
 
 ## Usage
@@ -173,7 +131,7 @@ This disclaimer extends to all parts of the library and its documentation.
 
 ---
 
-This disclaimer was last updated on May 9, 2024.
+This disclaimer was last updated on June 20, 2025.
 
 ## Contributing
 
@@ -189,4 +147,4 @@ This project is licensed under the MIT License. For more details, see the [LICEN
 
 ## Copyright
 
-© 2024 Ramazan Çetinkaya. All rights reserved.
+© 2025 Ramazan Çetinkaya. All rights reserved.
