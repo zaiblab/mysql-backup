@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MySQL Backup & Restore Library
  *
@@ -16,6 +17,7 @@ namespace DatabaseBackupManager;
 
 use PDO;
 use ZipArchive;
+use Exception;
 
 class MySQLBackup
 {
@@ -38,7 +40,7 @@ class MySQLBackup
      * @param PDO $db PDO instance for database connection
      * @param string $backupFolder Path to the backup folder
      */
-    public function __construct(PDO $db, $backupFolder = 'backup') 
+    public function __construct(PDO $db, $backupFolder = 'backup')
     {
         $this->db = $db;
         $this->backupFolder = rtrim($backupFolder, '/') . '/';
@@ -60,22 +62,18 @@ class MySQLBackup
     private function checkBackupFolder(): void
     {
         // Check if the backup folder exists
-        if (!file_exists($this->backupFolder)) 
-        {
+        if (!file_exists($this->backupFolder)) {
             // If the folder does not exist, attempt to create it
-            if (!mkdir($this->backupFolder, 0755, true)) 
-            {
+            if (!mkdir($this->backupFolder, 0755, true)) {
                 // If unable to create the folder, throw an exception
                 throw new Exception('Failed to create backup folder.');
             }
         }
 
         // Check if the backup folder is writable
-        if (!is_writable($this->backupFolder)) 
-        {
+        if (!is_writable($this->backupFolder)) {
             // If the folder is not writable, attempt to set the permissions
-            if (!chmod($this->backupFolder, 0755)) 
-            {
+            if (!chmod($this->backupFolder, 0755)) {
                 // If unable to set permissions, throw an exception
                 throw new Exception('Failed to set write permissions for backup folder.');
             }
@@ -91,7 +89,7 @@ class MySQLBackup
      * @return string Path to the generated backup file.
      * @throws Exception If backup process fails.
      */
-    public function backup($tables = null, $includeData = true, $archive = false) 
+    public function backup($tables = null, $includeData = true, $archive = false)
     {
         try {
             // Disable foreign key checks during backup
@@ -129,8 +127,7 @@ class MySQLBackup
             fclose($backupFile);
 
             // If archive option is enabled, zip the backup file
-            if ($archive) 
-            {
+            if ($archive) {
                 $backupFileName = $this->archiveBackupFile($backupFileName);
             }
 
@@ -155,7 +152,8 @@ class MySQLBackup
      * @param bool $dropTables Whether to drop existing tables before restoring data. Default is true.
      * @throws Exception If restore process fails.
      */
-    public function restore($backupFilePath, $dropTables = true) {
+    public function restore($backupFilePath, $dropTables = true)
+    {
         try {
             // Begin transaction
             $this->db->beginTransaction();
@@ -197,7 +195,8 @@ class MySQLBackup
      * @param string $backupFilePath Path to the backup file.
      * @return array Table names extracted from the backup file.
      */
-    private function extractTableNames($backupFilePath) {
+    private function extractTableNames($backupFilePath)
+    {
         $backupContent = file_get_contents($backupFilePath);
         preg_match_all('/Table structure for table `(\w+)`/', $backupContent, $matches);
         return $matches[1];
@@ -209,7 +208,8 @@ class MySQLBackup
      * @param array $tables Table names to be dropped.
      * @throws Exception If dropping tables fails.
      */
-    private function dropTables($tables) {
+    private function dropTables($tables)
+    {
         foreach ($tables as $table) {
             $this->db->exec("DROP TABLE IF EXISTS `$table`");
         }
@@ -221,10 +221,10 @@ class MySQLBackup
      * @param array|string|null $tables Names of the tables to backup.
      * @return string Backup file name.
      */
-    private function generateBackupFileName($tables) 
+    private function generateBackupFileName($tables)
     {
         $dbName = $this->db->query('SELECT DATABASE()')->fetchColumn();
-        $fileName = $this->backupFolder . 'backup_' . $dbName . ($tables ? '-' . implode('_', (array) $tables) : '') . '-' . date('Y-m-d_His') . '.sql';
+        $fileName = $this->backupFolder . 'backup_' . $dbName . ($tables ? '-' . implode('_', (array) $tables) : '') . '-' . date('Y-m-d_His') . '-' . time() . '.sql';
         return $fileName;
     }
 
@@ -233,13 +233,8 @@ class MySQLBackup
      * 
      * @param resource $backupFile File handle of the backup file.
      */
-    private function writeBackupHeader($backupFile) 
+    private function writeBackupHeader($backupFile)
     {
-        fwrite($backupFile, "-- Database Backup Manager\n");
-        fwrite($backupFile, "-- This backup was created automatically by the Database Backup Manager\n");
-        fwrite($backupFile, "-- © " . date('Y') . " Ramazan Çetinkaya. All rights reserved.\n");
-        fwrite($backupFile, "-- https://github.com/ramazancetinkaya/mysql-backup\n");
-        fwrite($backupFile, "--\n");
         fwrite($backupFile, "-- Host: " . $this->db->getAttribute(PDO::ATTR_CONNECTION_STATUS) . "\n");
         fwrite($backupFile, "-- Generated on: " . date('Y-m-d H:i:s') . "\n");
         fwrite($backupFile, "-- Server version: " . $this->db->getAttribute(PDO::ATTR_SERVER_VERSION) . "\n\n");
@@ -252,7 +247,7 @@ class MySQLBackup
      * @param bool $includeData Whether to include table data in the backup.
      * @param resource $backupFile File handle of the backup file.
      */
-    private function backupTables($tables, $includeData, $backupFile) 
+    private function backupTables($tables, $includeData, $backupFile)
     {
         foreach ((array) $tables as $table) {
             $this->backupTableStructure($table, $backupFile);
@@ -268,7 +263,7 @@ class MySQLBackup
      * @param bool $includeData Whether to include table data in the backup.
      * @param resource $backupFile File handle of the backup file.
      */
-    private function backupAllTables($includeData, $backupFile) 
+    private function backupAllTables($includeData, $backupFile)
     {
         $stmt = $this->db->query("SHOW TABLES");
         $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
@@ -281,7 +276,7 @@ class MySQLBackup
      * @param string $tableName Name of the table to backup.
      * @param resource $backupFile File handle of the backup file.
      */
-    private function backupTableStructure($tableName, $backupFile) 
+    private function backupTableStructure($tableName, $backupFile)
     {
         $stmt = $this->db->prepare("SHOW CREATE TABLE $tableName");
         $stmt->execute();
@@ -296,16 +291,17 @@ class MySQLBackup
      * @param string $tableName Name of the table to backup.
      * @param resource $backupFile File handle of the backup file.
      */
-    private function backupTableData($tableName, $backupFile) {
+    private function backupTableData($tableName, $backupFile)
+    {
         $stmt = $this->db->prepare("SELECT * FROM $tableName");
         $stmt->execute();
         $tableData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+
         if (empty($tableData)) {
             fwrite($backupFile, "--\n-- No data found for table `$tableName`\n--\n\n");
             return;
         }
-        
+
         fwrite($backupFile, "--\n-- Dumping data for table `$tableName`\n--\n\n");
         fwrite($backupFile, "INSERT INTO `$tableName` (");
         $fields = array_keys($tableData[0]);
@@ -313,7 +309,7 @@ class MySQLBackup
         fwrite($backupFile, ") VALUES\n");
         foreach ($tableData as $row) {
             fwrite($backupFile, "(");
-            $values = array_map(function($value) {
+            $values = array_map(function ($value) {
                 return "'" . addslashes((string) $value) . "'";
             }, array_values($row));
             fwrite($backupFile, implode(", ", $values));
@@ -331,7 +327,7 @@ class MySQLBackup
      * @return string Path to the archived backup file.
      * @throws Exception If archiving fails.
      */
-    private function archiveBackupFile($backupFileName) 
+    private function archiveBackupFile($backupFileName)
     {
         $zipFileName = $backupFileName . '.zip';
         $zip = new ZipArchive();
