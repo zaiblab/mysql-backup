@@ -94,8 +94,8 @@ $info = $backup->backup(null, false);
 $info = $backup->backup(null, true, true);
 
 if ($info) {
-    echo "Backup file created: " . $info['file'] . "\n";
-    echo "File size: " . $info['size'] . " bytes\n";
+    echo "Backup file created: " . $info['file_name'] . "\n";
+    echo "File size: " . $info['file_size'] . " bytes\n";
 }
 ```
 
