@@ -1,141 +1,142 @@
+# MySQL Backup & Restore Library (Built for CodeIgniter 4)
+
+A simple and developer-friendly way to back up and restore your MySQL database using PHP — now made to work smoothly with CodeIgniter 4.
+
 ## Table of Contents
 
-* [Introduction](#introduction)
-* [About the Project](#about-the-project)
-* [Features](#features)
-* [Requirements](#requirements)
-* [Installation](#installation)
-* [Usage](#usage)
-* [Disclaimer](#disclaimer)
-* [Contributing](#contributing)
-* [Authors](#authors)
-* [License](#license)
-* [Copyright](#copyright)
+- [Introduction](#introduction)
+- [About the Project](#about-the-project)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Disclaimer](#disclaimer)
+- [Contributing](#contributing)
+- [Authors](#authors)
+- [License](#license)
+- [Copyright](#copyright)
 
 ## Introduction
 
-This library is meticulously crafted to cater to a wide spectrum of users, ranging from novices venturing into the field to seasoned developers seeking seamless integration and robust functionality.
+Whether you're a beginner getting started or a developer who wants reliable backup features, this library is made to help you manage your database backups and restores in a simple and efficient way.
 
 ## About the Project
 
-The MySQL Backup & Restore Library furnishes comprehensive functionalities tailored for the seamless backup and restoration of MySQL databases through PHP. Leveraging this library, developers can effectively safeguard vital data housed within MySQL databases, ensuring robust data integrity and facilitating swift recovery in the event of data loss or system failures.
+This lightweight PHP library makes it easy to create clean and organized backups of your MySQL database — either full backups or selected tables. You can also restore your database using a `.sql` file or a `.zip` backup with just one line of code. It’s ideal for regular backups or moving your database from one place to another.
 
 ## Features
 
-* Backup entire MySQL databases or specific tables.
-* Restore databases from backup files.
-* Generate SQL dumps in a structured format.
-* Automatic generation of backup filenames with date and time.
-* Archive backups in ZIP format.
-* Easy to integrate into existing PHP projects.
+- Back up the full database or just selected tables
+- Restore from `.sql` files quickly and safely
+- Export backups with readable SQL structure
+- Automatically names backup files using date/time
+- Optionally compress backups into `.zip` format
+- Designed for use with CodeIgniter 4
 
 ## Requirements
 
-- PHP version 8.0 or **higher**
-- PDO extension **enabled**
-- ZipArchive extension **enabled**
-- MySQL database
-- Composer (for installation)
+To use this library, make sure you have:
+
+- PHP 8.0 or higher
+- CodeIgniter 4
+- `PDO` and `ZipArchive` extensions enabled
+- A working MySQL database
+- Composer installed
 
 ## Installation
 
-This library can be easily installed using [Composer](https://getcomposer.org/), a modern PHP dependency manager.
-
-### Step 1: Install Composer
-
-If you don't have Composer installed, you can download and install it by following the instructions on the [official Composer website](https://getcomposer.org/download/).
-
-### Step 2: Install the Library
-
-Once Composer is installed, you can install the `mysql-backup` library by running the following command in your project's root directory:
+Install it with Composer:
 
 ```bash
 composer require zaiblab/mysql-backup
 ```
 
-## Usage
+If needed, make sure Composer knows where to find the classes:
 
-```php
-require 'vendor/autoload.php'; // Include Composer's autoloader
-
-use DatabaseBackupManager\MySQLBackup;
-
-// Initialize PDO connection
-$db = new PDO('mysql:host=localhost;dbname=my_database', 'username', 'password');
-
-// Create an instance of MySQLBackup
-$mysqlBackup = new MySQLBackup($db);
-```
-
-- Perform a database backup:
-```php
-// Backs up all tables
-$backup = $mysqlBackup->backup();
-
-// Backs up the specified tables
-$backup = $mysqlBackup->backup(['tablename1']);
-$backup = $mysqlBackup->backup(['tablename1', 'tablename2']);
-
-// Include table data in the backup or vice versa
-$backup = $mysqlBackup->backup(null, true); // Default is true
-
-// Archiving
-$backup = $mysqlBackup->backup(null, true, false); // Default is false
-
-// Send the backup file by email
-$backup = $mysqlBackup->backup(null, true, true, 'recipient@example.com'); // Default is null
-
-if ($backup) {
-    echo "Database backup created successfully.";
-} else {
-    echo "Database backup failed!";
+```json
+"autoload": {
+    "psr-4": {
+        "DatabaseBackupManager\\": "vendor/zaiblab/mysql-backup/src/"
+    }
 }
 ```
 
-- Perform a database restore:
+Then refresh the autoload files:
+
+```bash
+composer dump-autoload
+```
+
+## Usage
+
+### 1. Set it up
+
 ```php
-// Restore a database
-$backupFile = 'backup_wordpress-2024-05-09_214345.sql';
-$restore = $mysqlBackup->restore($backupFile);
+use DatabaseBackupManager\MySQLBackup;
 
-// Whether to drop existing tables before restoring data
-$restore = $mysqlBackup->restore($backupFile, true); // Default is true
+$db = db_connect(); // CI4's database connection
+$backup = new MySQLBackup($db, WRITEPATH . 'backups');
+```
 
-if ($restore) {
-    echo "Database restored successfully.";
-} else {
-    echo "Database restoration failed!";
+### 2. Back up your database
+
+```php
+// Back up everything
+$info = $backup->backup();
+
+// Back up only specific tables
+$info = $backup->backup(['users', 'orders']);
+
+// Only save table structure (no data)
+$info = $backup->backup(null, false);
+
+// Create a zipped version of the backup
+$info = $backup->backup(null, true, true);
+
+if ($info) {
+    echo "Backup file created: " . $info['file'] . "\n";
+    echo "File size: " . $info['size'] . " bytes\n";
+}
+```
+
+### 3. Restore from a backup
+
+```php
+// Path to your backup file
+$path = WRITEPATH . 'backups/backup_mydb-2025-06-21_081400.sql';
+
+// Restore the backup
+$restored = $backup->restore($path);
+
+// Optionally: remove old tables before restoring
+$restored = $backup->restore($path, true);
+
+if ($restored) {
+    echo "Database restored successfully!";
 }
 ```
 
 ## Disclaimer
 
-This library is provided as-is without any warranties, expressed or implied. The use of this library is at your own risk, and the developers will not be liable for any damages or losses resulting from its use.
+This tool is shared in good faith, but please test everything before using it in production. Every setup is different, and it's always a good idea to double-check before relying on any tool for critical tasks.
 
-While every effort has been made to ensure the accuracy and reliability of the code in this library, it's important to understand that no guarantee is provided regarding its correctness or suitability for any purpose.
+By using this library, you agree that you're responsible for any outcomes related to your data or systems.
 
-Users are encouraged to review and test the functionality of this library in their own environments before deploying it in production or critical systems.
-
-This disclaimer extends to all parts of the library and its documentation.
-
-**By using the Library, you agree to these terms and conditions. If you do not agree with any part of this disclaimer, do not use the Library.**
-
----
-
-This disclaimer was last updated on June 20, 2025.
+_Last updated: June 21, 2025_
 
 ## Contributing
 
-Contributions are welcome! If you find any issues or have suggestions for improvements, feel free to open an issue or create a pull request.
+Suggestions, improvements, and bug reports are always welcome! Open an issue or create a pull request on [GitHub](https://github.com/zaiblab/mysql-backup).
 
 ## Authors
 
-- **Ramazan Çetinkaya** - [@ramazancetinkaya](https://github.com/ramazancetinkaya)
+- **Ramazan Çetinkaya** — [@ramazancetinkaya](https://github.com/ramazancetinkaya)
+- **Shahzaib** — [@zaiblab](https://github.com/zaiblab) (Maintainer for CodeIgniter 4 version)
 
 ## License
 
-This project is licensed under the MIT License. For more details, see the [LICENSE](LICENSE) file.
+This project uses the [MIT License](LICENSE). You’re free to use, modify, and share it however you'd like.
 
 ## Copyright
 
-© 2025 Ramazan Çetinkaya. All rights reserved.
+© 2025 Ramazan Çetinkaya & Shahzaib. All rights reserved.
