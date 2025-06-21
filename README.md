@@ -39,7 +39,7 @@ To use this library, make sure you have:
 
 - PHP 8.0 or higher
 - CodeIgniter 4
-- `PDO` and `ZipArchive` extensions enabled
+- `ZipArchive` extensions enabled
 - A working MySQL database
 - Composer installed
 
