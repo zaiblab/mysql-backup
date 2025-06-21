@@ -1,8 +1,20 @@
 {
     "name": "zaiblab/mysql-backup",
-    "description": "A maintained fork of ramazancetinkaya/mysql-backup — A PHP library for backing up and restoring MySQL databases.",
+    "description": "PHP library for backing up and restoring MySQL databases — fully compatible with CodeIgniter 4.",
     "type": "library",
-    "keywords": ["php", "pdo", "mysql", "database", "backup", "restore", "maintained fork"],
+    "keywords": [
+        "php",
+        "mysql",
+        "database",
+        "backup",
+        "restore",
+        "codeigniter4",
+        "ci4",
+        "ci4 database",
+        "codeigniter backup",
+        "mysql backup",
+        "database export"
+    ],
     "license": "MIT",
     "authors": [
         {
@@ -11,8 +23,8 @@
             "homepage": "https://github.com/ramazancetinkaya"
         },
         {
-            "name": "Shahzaib Sarwar",
-            "email": "your-email@example.com",
+            "name": "Shahzaib",
+            "email": "zaiblab@yahoo.com",
             "homepage": "https://github.com/zaiblab",
             "role": "Maintainer"
         }
